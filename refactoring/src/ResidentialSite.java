@@ -11,12 +11,12 @@ class ResidentialSite extends Site
 	
 	public void addReading(Reading newReading) {
 		// add reading to end of array
-		_readings[lastReadingIndex()] = newReading;
+		readings[lastReadingIndex()] = newReading;
 	}
 
 	private int lastReadingIndex() {
 		int i = 0;
-		while (_readings[i] != null) i++;
+		while (readings[i] != null) i++;
 		return i;
 	}
 	
@@ -27,9 +27,9 @@ class ResidentialSite extends Site
 			throw new NullPointerException();
 		}
 		
-		int usage = _readings[i-1].amount() - _readings[i-2].amount();
-		Date end = _readings[i-1].date();
-		Date start = _readings[i-2].date();
+		int usage = readings[i-1].amount() - readings[i-2].amount();
+		Date end = readings[i-1].date();
+		Date start = readings[i-2].date();
 		start.setDate(start.getDate() + 1); //set to begining of period
 		return charge(usage, start, end);
 	}
@@ -37,9 +37,9 @@ class ResidentialSite extends Site
 	private Dollars charge(int usage, Date start, Date end) {
 		Dollars result;
 		
-		double summerFraction = _zone.summerFraction(this, start, end);
+		double summerFraction = zone.summerFraction(start, end);
 		
-		result = new Dollars ((usage * _zone.summerRate() * summerFraction) + (usage * _zone.winterRate() * (1 - summerFraction)));
+		result = new Dollars ((usage * zone.summerRate() * summerFraction) + (usage * zone.winterRate() * (1 - summerFraction)));
 		result = result.plus(new Dollars (result.times(TAX_RATE)));
 		Dollars fuel = new Dollars(usage * 0.0175);
 		result = result.plus(fuel);

@@ -5,15 +5,15 @@ public class LifelineSite extends Site
 	public void addReading(Reading newReading) 
 	{
 		
-		Reading[] newArray = new Reading[_readings.length + 1];
-		System.arraycopy(_readings, 0, newArray, 1, _readings.length);
+		Reading[] newArray = new Reading[readings.length + 1];
+		System.arraycopy(readings, 0, newArray, 1, readings.length);
 		newArray[0] = newReading;
-		_readings = newArray;
+		readings = newArray;
 	}
 	
 	public Dollars charge()
 	{
-		int usage = _readings[0].amount() - _readings[1].amount();
+		int usage = readings[0].amount() - readings[1].amount();
 		return charge(usage);
 	}
 	

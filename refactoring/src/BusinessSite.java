@@ -6,12 +6,19 @@ class BusinessSite extends Site{
 	static final int END_AMOUNT = 1000;
  
 	public void addReading(Reading newReading) {
-		_readings[++lastReading] = newReading;
+		readings[++lastReading] = newReading;
 	}
 	
 	public Dollars charge() {
-		int usage = _readings[lastReading].amount() - _readings[lastReading -1].amount();
-		return charge(usage);
+		return charge(lastReading().amount() - previousReading().amount());
+	}
+
+	private Reading previousReading() {
+		return readings[lastReading -1];
+	}
+
+	private Reading lastReading() {
+		return readings[lastReading];
 	}
 	
 	private Dollars charge(int usage) {
@@ -25,6 +32,7 @@ class BusinessSite extends Site{
 		
 		result = new Dollars (t1 + t2 + t3);
 		result = result.plus(new Dollars (usage * 0.0175));
+		
 		Dollars base = new Dollars (result.min(new Dollars (50)).times(0.07));
 		
 		if (result.isGreaterThan(new Dollars (50))) {

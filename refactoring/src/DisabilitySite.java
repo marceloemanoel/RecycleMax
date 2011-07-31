@@ -11,12 +11,12 @@ class DisabilitySite extends Site
 	}
 	
 	public void addReading(Reading newReading) {
-		_readings[lastReadingIndex()] = newReading;
+		readings[lastReadingIndex()] = newReading;
 	}
 
 	private int lastReadingIndex() {
 		int i = 0;
-		while(_readings[i] != null){
+		while(readings[i] != null){
 			i++;
 		}
 		return i;
@@ -30,9 +30,9 @@ class DisabilitySite extends Site
 			throw new NullPointerException();
 		}
 		
-		int usage = _readings[i-1].amount() - _readings[i-2].amount();
-		Date end = _readings[i-1].date();
-		Date start = _readings[i-2].date();
+		int usage = readings[i-1].amount() - readings[i-2].amount();
+		Date end = readings[i-1].date();
+		Date start = readings[i-2].date();
 		start.setDate(start.getDate() + 1); //set to begining of period
 		return charge(usage, start, end);
 	}
@@ -42,9 +42,9 @@ class DisabilitySite extends Site
 		Dollars result;
 		int usage = Math.min(fullUsage, CAP);
 
-		double summerFraction = _zone.summerFraction(this, start, end);
+		double summerFraction = zone.summerFraction(start, end);
 		
-		result = new Dollars ((usage * _zone.summerRate() * summerFraction) + (usage * _zone.winterRate() * (1 - summerFraction)));
+		result = new Dollars ((usage * zone.summerRate() * summerFraction) + (usage * zone.winterRate() * (1 - summerFraction)));
 		result = result.plus(new Dollars (Math.max(fullUsage - usage, 0) * 0.062));
 		result = result.plus(new Dollars (result.times(TAX_RATE)));
 		Dollars fuel = new Dollars(fullUsage * 0.0175);
