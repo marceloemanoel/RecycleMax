@@ -1,26 +1,13 @@
 class BusinessSite extends Site{
 	
-	private int lastReading;
 	private static final double START_RATE = 0.09;
 	static final double END_RATE = 0.05;
 	static final int END_AMOUNT = 1000;
  
-	public void addReading(Reading newReading) {
-		readings[++lastReading] = newReading;
-	}
-	
 	public Dollars charge() {
 		return charge(lastReading().amount() - previousReading().amount());
 	}
 
-	private Reading previousReading() {
-		return readings[lastReading -1];
-	}
-
-	private Reading lastReading() {
-		return readings[lastReading];
-	}
-	
 	private Dollars charge(int usage) {
 		Dollars result;
 		
