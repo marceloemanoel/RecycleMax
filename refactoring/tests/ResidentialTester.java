@@ -14,7 +14,31 @@ public class ResidentialTester {
 		new Zone("C", 0.065, 0.065, new Date("5 Jun 1997"), new Date("31 Aug 1997")).persist();
 		site = new ResidentialSite((Zone) Registry.get("A"));
 	}
-
+	
+	@Test
+	public void test100InSummer(){
+		site.addReading(new Reading(10, new Date("15 May 1997")));
+		site.addReading(new Reading(110, new Date("15 Jun 1997")));
+		
+		Assert.assertEquals(new Dollars(0), site.charge());
+	}
+	
+	@Test
+	public void test100BetweenSummerAndWinter(){
+		site.addReading(new Reading(10, new Date("1 Sep 1997")));
+		site.addReading(new Reading(110, new Date("1 Oct 1997")));
+		
+		Assert.assertEquals(new Dollars(0), site.charge());
+	}
+	
+	@Test
+	public void test100BetweenWinterAndSummer(){
+		site.addReading(new Reading(10, new Date("10 May 1997")));
+		site.addReading(new Reading(110, new Date("10 Jun 1997")));
+		
+		Assert.assertEquals(new Dollars(0), site.charge());
+	}
+	
 	@Test
 	public void testZero() {
 		site.addReading(new Reading(10, new Date("1 Jan 1997")));

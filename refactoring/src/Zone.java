@@ -1,20 +1,20 @@
 import java.util.Date;
 
 class Zone {
-	private Date summerEnd;
-	private Date summerStart;
+
+	private DateInterval summer;
 	private double winterRate;
 	private double summerRate;
 	private String name;
-	
-	Zone(String name, double summerRate, double winterRate, Date summerStart, Date summerEnd) {
+
+	Zone(String name, double summerRate, double winterRate, Date summerStart,
+			Date summerEnd) {
 		this.name = name;
 		this.summerRate = summerRate;
 		this.winterRate = winterRate;
-		this.summerStart = summerStart;
-		this.summerEnd = summerEnd;
+		this.summer = new DateInterval(summerStart, summerEnd);
 	}
-	
+
 	public Zone persist() {
 		Registry.add(this);
 		return this;
@@ -22,14 +22,6 @@ class Zone {
 
 	public static Zone get(String name) {
 		return (Zone) Registry.get(name);
-	}
-
-	public Date summerEnd() {
-		return summerEnd;
-	}
-
-	public Date summerStart() {
-		return summerStart;
 	}
 
 	public double winterRate() {
@@ -44,79 +36,82 @@ class Zone {
 		return name;
 	}
 
-	double summerFraction(Date start, Date end) {
+	double summerFraction(DateInterval lastPeriod) {
 		double summerFraction;
-		if (start.after(summerEnd()) || end.before(summerStart()))
+		if (summer.outside(lastPeriod))
 			summerFraction = 0;
-		else if (!start.before(summerStart()) && !start.after(summerEnd()) 	&& !end.before(summerStart()) && !end.after(summerEnd()))
+		else if (summer.contains(lastPeriod))
 			summerFraction = 1;
-		else {
-			double summerDays;
-			if (start.before(summerStart()) || start.after(summerEnd())) {
-				// end is in the summer
-				summerDays = dayOfYear(end) - dayOfYear(summerStart()) + 1;
-			} else {
-				// start is in summer
-				summerDays = dayOfYear(summerEnd()) - dayOfYear(start) + 1;
-			}
-			summerFraction = summerDays / (dayOfYear(end) - dayOfYear(start) + 1);
+		else { 
+			double summerDays = summerDays(lastPeriod);
+			summerFraction = summerDays	/ (dayOfYear(lastPeriod.getEnd()) - dayOfYear(lastPeriod.getStart()) + 1);
 		}
 		return summerFraction;
 	}
 
+	private double summerDays(DateInterval lastPeriod) {
+		// part in summer part in winter
+		double summerDays;
+		if (lastPeriod.getStart().before(summer.getStart()) || lastPeriod.getStart().after(summer.getEnd())) {
+			// end is in the summer
+			summerDays = dayOfYear(lastPeriod.getEnd()) - dayOfYear(summer.getStart()) + 1;
+		} 
+		else {
+			// start is in summer
+			summerDays = dayOfYear(summer.getEnd()) - dayOfYear(lastPeriod.getStart()) + 1;
+		}
+		return summerDays;
+	}
+
 	int dayOfYear(Date arg) {
-		int result;
+		int dayOfTheYear = 0;
 		switch (arg.getMonth()) {
-		case 0:
-			result = 0;
-			break;
 		case 1:
-			result = 31;
+			dayOfTheYear = 31;
 			break;
 		case 2:
-			result = 59;
+			dayOfTheYear = 59;
 			break;
 		case 3:
-			result = 90;
+			dayOfTheYear = 90;
 			break;
 		case 4:
-			result = 120;
+			dayOfTheYear = 120;
 			break;
 		case 5:
-			result = 151;
+			dayOfTheYear = 151;
 			break;
 		case 6:
-			result = 181;
+			dayOfTheYear = 181;
 			break;
 		case 7:
-			result = 212;
+			dayOfTheYear = 212;
 			break;
 		case 8:
-			result = 243;
+			dayOfTheYear = 243;
 			break;
 		case 9:
-			result = 273;
+			dayOfTheYear = 273;
 			break;
 		case 10:
-			result = 304;
+			dayOfTheYear = 304;
 			break;
 		case 11:
-			result = 334;
+			dayOfTheYear = 334;
 			break;
-		default:
-			throw new IllegalArgumentException();
 		}
-	
-		result += arg.getDate();
-	
+
+		dayOfTheYear += arg.getDate();
+
 		if (isLeapYear(arg)) {
-			result++;
+			dayOfTheYear++;
 		}
-		return result;
+		return dayOfTheYear;
 	}
 
 	boolean isLeapYear(Date arg) {
-		return (arg.getYear() % 4 == 0)	&& ((arg.getYear() % 100 != 0) || ((arg.getYear() + 1900) % 400 == 0));
+		return (arg.getYear() % 4 == 0)
+				&& ((arg.getYear() % 100 != 0) || ((arg.getYear() + 1900) % 400 == 0));
 	}
 
 }

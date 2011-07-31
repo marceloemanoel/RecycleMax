@@ -8,7 +8,8 @@ import org.junit.runners.Suite.SuiteClasses;
 				DisabilityTester.class,
 				DollarsTest.class, 
 				LifelineTester.class, 
-				ResidentialTester.class 
+				ResidentialTester.class,
+				DateIntervalTest.class
 			 })
 public class AllTests {
 }

@@ -15,16 +15,19 @@ class ResidentialSite extends Site {
 
 		int usage = lastReading().amount() - previousReading().amount();
 		
-		Date end = lastReading().date();
 		Date start = previousReading().date();
-		
 		start.setDate(start.getDate() + 1); // set to begining of period
-		return charge(usage, start, end);
+
+		Date end = lastReading().date();
+		
+		DateInterval lastPeriod = new DateInterval(start, end);
+		
+		return charge(usage, lastPeriod);
 	}
 	
-	private Dollars charge(int usage, Date start, Date end) {
+	private Dollars charge(int usage, DateInterval lastPeriod) {
 		
-		double summerFraction = zone.summerFraction(start, end);
+		double summerFraction = zone.summerFraction(lastPeriod);
 		
 		Dollars result = new Dollars ((usage * zone.summerRate() * summerFraction) + (usage * zone.winterRate() * (1 - summerFraction)));
 		result = result.plus(new Dollars (result.times(TAX_RATE)));
