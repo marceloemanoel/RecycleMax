@@ -36,6 +36,18 @@ class ResidentialSite extends Site
 	
 	private Dollars charge(int usage, Date start, Date end) {
 		Dollars result;
+		
+		double summerFraction = calculateSummerFraction(start, end);
+		
+		result = new Dollars ((usage * _zone.summerRate() * summerFraction) + (usage * _zone.winterRate() * (1 - summerFraction)));
+		result = result.plus(new Dollars (result.times(TAX_RATE)));
+		Dollars fuel = new Dollars(usage * 0.0175);
+		result = result.plus(fuel);
+		result = new Dollars (result.plus(fuel.times(TAX_RATE)));
+		return result;
+	}
+
+	private double calculateSummerFraction(Date start, Date end) {
 		double summerFraction;
 		// Find out how much of period is in the summer
 		if (start.after(_zone.summerEnd()) || end.before(_zone.summerStart()))
@@ -53,12 +65,7 @@ class ResidentialSite extends Site
 			}
 			summerFraction = summerDays / (dayOfYear(end) - dayOfYear(start) + 1);
 		}
-		result = new Dollars ((usage * _zone.summerRate() * summerFraction) + (usage * _zone.winterRate() * (1 - summerFraction)));
-		result = result.plus(new Dollars (result.times(TAX_RATE)));
-		Dollars fuel = new Dollars(usage * 0.0175);
-		result = result.plus(fuel);
-		result = new Dollars (result.plus(fuel.times(TAX_RATE)));
-		return result;
+		return summerFraction;
 	}
 	int dayOfYear(Date arg) {
 		int result;
