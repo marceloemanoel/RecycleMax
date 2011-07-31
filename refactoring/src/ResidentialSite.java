@@ -1,14 +1,12 @@
 import java.util.Date;
 
 class ResidentialSite extends Site
-{
+ {
 
-	private static final double TAX_RATE = 0.05;
-	
-	ResidentialSite (Zone zone) {
+	ResidentialSite(Zone zone) {
 		super(zone);
 	}
-	
+
 	public void addReading(Reading newReading) {
 		// add reading to end of array
 		readings[lastReadingIndex()] = newReading;
@@ -16,21 +14,22 @@ class ResidentialSite extends Site
 
 	private int lastReadingIndex() {
 		int i = 0;
-		while (readings[i] != null) i++;
+		while (readings[i] != null)
+			i++;
 		return i;
 	}
 	
 	public Dollars charge() {
 		int i = lastReadingIndex();
-		
-		if( i < 2 ) {
+
+		if (i < 2) {
 			throw new NullPointerException();
 		}
-		
-		int usage = readings[i-1].amount() - readings[i-2].amount();
-		Date end = readings[i-1].date();
-		Date start = readings[i-2].date();
-		start.setDate(start.getDate() + 1); //set to begining of period
+
+		int usage = readings[i - 1].amount() - readings[i - 2].amount();
+		Date end = readings[i - 1].date();
+		Date start = readings[i - 2].date();
+		start.setDate(start.getDate() + 1); // set to begining of period
 		return charge(usage, start, end);
 	}
 	
