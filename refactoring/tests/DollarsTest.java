@@ -27,6 +27,7 @@ public class DollarsTest {
 		Assert.assertEquals(one, sum);
 	}
 	
+	@Test
 	public void itShouldReturnItSelfWhenIAddZero(){
 		Dollars sum = one.plus(zero);
 		Assert.assertEquals(one, sum);

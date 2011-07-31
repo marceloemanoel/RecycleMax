@@ -9,9 +9,9 @@ class DisabilitySite extends Site {
 	}
 
 	public Dollars charge() {
-		int i = lastReadingIndex();
+		int lastReadingIndex = lastReadingIndex();
 
-		if (i < 2) {
+		if (lastReadingIndex < 2) {
 			throw new NullPointerException();
 		}
 
@@ -23,12 +23,11 @@ class DisabilitySite extends Site {
 	}
 	
 	private Dollars charge(int fullUsage, Date start, Date end) {
-		Dollars result;
 		int usage = Math.min(fullUsage, CAP);
 
 		double summerFraction = zone.summerFraction(start, end);
 		
-		result = new Dollars ((usage * zone.summerRate() * summerFraction) + (usage * zone.winterRate() * (1 - summerFraction)));
+		Dollars result = new Dollars ((usage * zone.summerRate() * summerFraction) + (usage * zone.winterRate() * (1 - summerFraction)));
 		result = result.plus(new Dollars (Math.max(fullUsage - usage, 0) * 0.062));
 		result = result.plus(new Dollars (result.times(TAX_RATE)));
 		Dollars fuel = new Dollars(fullUsage * 0.0175);
