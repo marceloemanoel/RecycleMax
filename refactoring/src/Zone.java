@@ -44,7 +44,7 @@ class Zone {
 		return _name;
 	}
 
-	double summerFraction(DisabilitySite site, Date start, Date end) {
+	double summerFraction(Site site, Date start, Date end) {
 		double summerFraction;
 		if (start.after(summerEnd()) || end.before(summerStart()))
 			summerFraction = 0;
