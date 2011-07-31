@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 public class LifelineTester extends TestCase
 {
-	LifelineSite _subject;
+	Site _subject;
 	
 	public void setUp() 
 	{

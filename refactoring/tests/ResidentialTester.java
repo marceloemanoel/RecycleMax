@@ -95,12 +95,8 @@ public class ResidentialTester {
 		Assert.assertEquals(new Dollars(1.9730005336E8), site.charge());
 	}
 
-	@Test
+	@Test(expected=NullPointerException.class)
 	public void testNoReadings() {
-		try {
-			site.charge();
-			Assert.fail();
-		} catch (NullPointerException e) {
-		}
+		site.charge();
 	}
 }

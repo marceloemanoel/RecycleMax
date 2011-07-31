@@ -1,4 +1,3 @@
-import java.util.Date;
 
 class DisabilitySite extends Site {
 	private static final Dollars FUEL_TAX_CAP = new Dollars(0.10);
@@ -8,34 +7,18 @@ class DisabilitySite extends Site {
 		super(zone);
 	}
 
-	public Dollars charge() {
-		int lastReadingIndex = lastReadingIndex();
-
-		if (lastReadingIndex < 2) {
-			throw new NullPointerException();
-		}
-
-		int usage = lastReading().amount() - previousReading().amount();
-
-		Date end = lastReading().date();
-		
-		Date start = previousReading().date();
-		start.setDate(start.getDate() + 1); // set to begining of period
-		
-		return charge(usage, new DateInterval(start, end));
-	}
-	
-	private Dollars charge(int fullUsage, DateInterval lastPeriod) {
+	protected Dollars baseCharge() {
+		int fullUsage = usage();
 		int usage = Math.min(fullUsage, CAP);
 
-		double summerFraction = zone.summerFraction(lastPeriod);
+		double summerFraction = zone.summerFraction(lastPeriod());
 		
 		Dollars result = new Dollars ((usage * zone.summerRate() * summerFraction) + (usage * zone.winterRate() * (1 - summerFraction)));
 		result = result.plus(new Dollars (Math.max(fullUsage - usage, 0) * 0.062));
-		result = result.plus(new Dollars (result.times(TAX_RATE)));
-		Dollars fuel = new Dollars(fullUsage * 0.0175);
-		result = result.plus(fuel);
-		result = new Dollars (result.plus(fuel.times(TAX_RATE).min(FUEL_TAX_CAP)));
 		return result;
+	}
+
+	protected Dollars fuelChargeWithTaxes() {
+		return fuelCharge().times(TAX_RATE).min(FUEL_TAX_CAP);
 	}
 }
